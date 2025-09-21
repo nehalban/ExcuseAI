@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExcuseAI - AI-Powered Excuse Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #00d4ff, #ff6b9d, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .header .logo {
+            font-size: 3rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .category-btn {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .category-btn:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .category-btn.active {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .category-btn .icon {
+            font-size: 2rem;
+        }
+        .custom-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .custom-section h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .custom-prompt {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .custom-prompt::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        .generator-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .generator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .generate-btn {
+            background: linear-gradient(45deg, #00d4ff, #ff6b9d);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .generate-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .excuse-display {
+            background: rgba(255, 107, 157, 0.2);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .excuse-text {
+            font-size: 1.3rem;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 3rem;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .favorites {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .favorites h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .favorite-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .favorite-text {
+            flex-grow: 1; 
+            word-break: break-word; 
+            text-align: left; 
+            font-style: italic;
+        }
+        .delete-fav-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            flex-shrink: 0; 
+            transition: color 0.2s ease;
+        }
+        .delete-fav-btn:hover {
+            color: #ff6b9d;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 2rem;
+            opacity: 0.8;
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            .categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .generator-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1><span class="logo">⚡</span>ExcuseAI</h1>
+        <p>Your AI-powered excuse generator for every awkward situation life throws at you</p>
+        <div style="margin-top: 1rem; opacity: 0.8;">
+            <i class="fas fa-magic" style="margin-right: 0.5rem;"></i>
+            Powered by Google Gemini AI
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="categories">
+            <div class="category-btn" data-category="general"> <span class="icon">✨</span> <span>General</span> </div>
+            <div class="category-btn" data-category="work"> <span class="icon">💼</span> <span>Work</span> </div>
+            <div class="category-btn" data-category="social"> <span class="icon">👥</span> <span>Social Events</span> </div>
+            <div class="category-btn" data-category="romantic"> <span class="icon">💖</span> <span>Dating</span> </div>
+            <div class="category-btn" data-category="tardiness"> <span class="icon">⏰</span> <span>Being Late</span> </div>
+            <div class="category-btn" data-category="homework"> <span class="icon">☕</span> <span>Homework</span> </div>
+        </section>
+
+        <section class="custom-section">
+            <h3><i class="fas fa-edit"></i> Custom Excuse Request</h3>
+            <textarea id="customPrompt" class="custom-prompt" placeholder="Describe your specific situation... (e.g., 'I need an excuse for missing my friend's birthday party because I forgot to buy a gift')"></textarea>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="useAI">
+                <label for="useAI">Use AI Generation</label>
+            </div>
+        </section>
+
+        <section class="generator-section">
+            <div class="generator-header">
+                <div>
+                    <h2 id="currentCategory">General Excuse</h2>
+                    <span id="aiIndicator" style="display: none; font-size: 0.8rem; background: rgba(0, 212, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 15px; border: 1px solid rgba(0, 212, 255, 0.3);">AI Generated</span>
+                </div>
+                <button id="generateBtn" class="generate-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    Generate Excuse
+                </button>
+            </div>
+            <div id="excuseContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>AI is crafting your perfect excuse...</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="favoritesSection" class="favorites" style="display: none;">
+            <h3><i class="fas fa-heart" style="color: #ff6b9d;"></i> Your Favorite Excuses</h3>
+            <div id="favoritesList"></div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 ExcuseAI - Making awkward moments less awkward, one excuse at a time</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;"> Remember: Use responsibly and maybe try honesty once in a while! 😉 </p>
+    </footer>
+
+    <script>
+        let currentCategory = 'general';
+        let favorites = [];
+
+        // --- DOM Elements ---
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const useAICheckbox = document.getElementById('useAI');
+        const generateBtn = document.getElementById('generateBtn');
+        const customPromptInput = document.getElementById('customPrompt');
+        const excuseContainer = document.getElementById('excuseContainer');
+        const currentCategoryDisplay = document.getElementById('currentCategory');
+        const aiIndicator = document.getElementById('aiIndicator');
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesList = document.getElementById('favoritesList');
+
+        // --- Event Listeners ---
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                updateCategoryDisplay();
+                generateExcuse();
+            });
+        });
+
+        useAICheckbox.addEventListener('change', function() {
+            updateCategoryDisplay();
+        });
+
+        generateBtn.addEventListener('click', generateExcuse);
+
+        customPromptInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                generateExcuse();
+            }
+        });
+
+        favoritesList.addEventListener('click', (event) => {
+            const deleteButton = event.target.closest('.delete-fav-btn');
+            if (deleteButton) {
+                const indexToRemove = parseInt(deleteButton.dataset.index, 10);
+                removeFavorite(indexToRemove);
+            }
+        });
+
+        // --- Core Functions ---
+
+        function updateCategoryDisplay() {
+            const categories = {
+                'general': 'General', 'work': 'Work', 'social': 'Social Events',
+                'romantic': 'Dating', 'tardiness': 'Being Late', 'homework': 'Homework'
+            };
+            const customPrompt = customPromptInput.value.trim();
+            const useAI = useAICheckbox.checked;
+            const displayName = (useAI && customPrompt) ? 'Custom Excuse' : `${categories[currentCategory]} Excuse`;
+            currentCategoryDisplay.textContent = displayName;
+            
+            // AI indicator is now more flexible
+            aiIndicator.style.display = useAI ? 'inline-block' : 'none';
+        }
+
+        function generateExcuse() {
+            const customPrompt = customPromptInput.value.trim();
+            const useAI = useAICheckbox.checked;
+            
+            // Simplified request data, no longer sends API key
+            const requestData = {
+                category: currentCategory,
+                custom_prompt: customPrompt,
+                use_ai: useAI
+            };
+
+            excuseContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>${useAI ? 'AI is crafting your perfect excuse...' : 'Finding a classic excuse...'}</span>
+                </div>`;
+            generateBtn.disabled = true;
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new TypeError('Server response was not JSON. Check Flask server logs.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.excuse) {
+                    displayExcuse(data.excuse, data.ai_generated);
+                } else {
+                    displayExcuse(data.error || "An unknown error occurred.", false);
+                }
+            })
+            .catch(error => {
+                console.error('❌ FRONTEND ERROR:', error);
+                displayExcuse(`Error: ${error.message}. Check browser console and server logs.`, false);
+            })
+            .finally(() => {
+                generateBtn.disabled = false;
+                updateCategoryDisplay();
+            });
+        }
+
+        function displayExcuse(excuse, aiGenerated = false) {
+            excuseContainer.innerHTML = ''; 
+
+            const displayDiv = document.createElement('div');
+            displayDiv.className = 'excuse-display';
+            displayDiv.innerHTML = `<p class="excuse-text">"${excuse}"</p>`;
+
+            if (aiGenerated) {
+                const aiLabel = document.createElement('div');
+                aiLabel.style.cssText = 'margin-top: 1rem; font-size: 0.8rem; color: #00d4ff;';
+                aiLabel.innerHTML = `<i class="fas fa-robot"></i> AI Generated`;
+                displayDiv.appendChild(aiLabel);
+            }
+
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'action-buttons';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'action-btn';
+            copyBtn.innerHTML = `<i class="fas fa-copy"></i> Copy to Clipboard`;
+            copyBtn.addEventListener('click', (e) => {
+                navigator.clipboard.writeText(excuse).then(() => {
+                    const btn = e.currentTarget;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+                });
+            });
+
+            const favBtn = document.createElement('button');
+            favBtn.className = 'action-btn';
+            favBtn.innerHTML = `<i class="fas fa-heart"></i> Save to Favorites`;
+            favBtn.addEventListener('click', (e) => {
+                addToFavorites(excuse, e.currentTarget);
+            });
+
+            actionsDiv.appendChild(copyBtn);
+            actionsDiv.appendChild(favBtn);
+            excuseContainer.appendChild(displayDiv);
+            excuseContainer.appendChild(actionsDiv);
+        }
+
+        // --- Favorites Management ---
+
+        function addToFavorites(excuse, btnElement) {
+            if (!favorites.includes(excuse)) {
+                favorites.push(excuse);
+                updateFavorites();
+
+                const originalText = btnElement.innerHTML;
+                btnElement.innerHTML = '<i class="fas fa-check"></i> Added!';
+                setTimeout(() => { btnElement.innerHTML = originalText; }, 2000);
+            }
+        }
+        
+        function removeFavorite(index) {
+            if (index > -1 && index < favorites.length) {
+                favorites.splice(index, 1);
+                updateFavorites();
+            }
+        }
+        
+        function updateFavorites() {
+            if (favorites.length > 0) {
+                favoritesSection.style.display = 'block';
+                favoritesList.innerHTML = favorites.map((fav, index) => `
+                    <div class="favorite-item">
+                        <span class="favorite-text">"${fav}"</span>
+                        <button class="delete-fav-btn" data-index="${index}" title="Delete favorite">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                favoritesSection.style.display = 'none';
+            }
+            localStorage.setItem('excuseAIFavorites', JSON.stringify(favorites));
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedFavorites = JSON.parse(localStorage.getItem('excuseAIFavorites'));
+            if (savedFavorites) {
+                favorites = savedFavorites;
+                updateFavorites();
+            }
+
+            const firstBtn = document.querySelector('.category-btn');
+            if (firstBtn) {
+                firstBtn.classList.add('active');
+                currentCategory = firstBtn.dataset.category;
+            }
+            updateCategoryDisplay();
+            generateExcuse();
+        });
+    </script>
+</body>
+</html>
