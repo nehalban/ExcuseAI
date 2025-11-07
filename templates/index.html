@@ -3,14 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ExcuseAI - Your AI-powered excuse generator for every awkward situation">
+    <meta name="theme-color" content="#667eea">
     <title>ExcuseAI - AI-Powered Excuse Generator</title>
+    
+    <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
     <link href="/static/css/styles.css" rel="stylesheet">
 </head>
 <body>
 
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+        <span>Dark Mode</span>
+    </button>
+
+    <!-- Header Section -->
     <header class="header">
-        <h1><span class="logo">⚡</span>ExcuseAI</h1>
+        <div class="logo-container">
+            <img src="/static/logo.png" alt="ExcuseAI Logo" class="logo-image">
+            <h1>ExcuseAI</h1>
+        </div>
         <p>Your AI-powered excuse generator for every awkward situation life throws at you</p>
         <div class="powered-by">
             <i class="fas fa-magic"></i>
@@ -19,18 +35,21 @@
     </header>
 
     <div class="container">
+        <!-- Excuse Generator Section -->
         <section class="generator-section">
             <div class="generator-header">
                 <div>
                     <h2 id="currentCategory">General Excuse</h2>
-                    <span id="aiIndicator" style="display: none;"><i class="fas fa-robot"></i> AI Generated</span>
+                    <span id="aiIndicator" style="display: none;">
+                        <i class="fas fa-robot"></i> AI Generated
+                    </span>
                 </div>
-                <button id="generateBtn" class="generate-btn">
+                <button id="generateBtn" class="generate-btn" aria-label="Generate excuse">
                     <i class="fas fa-wand-magic-sparkles"></i>
                     Generate Excuse
                 </button>
             </div>
-            <div id="excuseContainer">
+            <div id="excuseContainer" role="region" aria-live="polite" aria-label="Generated excuse">
                 <div class="loading">
                     <div class="spinner"></div>
                     <span>Crafting your perfect excuse...</span>
@@ -38,29 +57,67 @@
             </div>
         </section>
 
-        <section class="categories">
-            <div class="category-btn" data-category="general"> <span class="icon">✨</span> <span>General</span> </div>
-            <div class="category-btn" data-category="work"> <span class="icon">💼</span> <span>Work</span> </div>
-            <div class="category-btn" data-category="social"> <span class="icon">👥</span> <span>Social Events</span> </div>
-            <div class="category-btn" data-category="romantic"> <span class="icon">💖</span> <span>Dating</span> </div>
-            <div class="category-btn" data-category="tardiness"> <span class="icon">⏰</span> <span>Being Late</span> </div>
-            <div class="category-btn" data-category="homework"> <span class="icon">☕</span> <span>Homework</span> </div>
+        <!-- Category Selection -->
+        <section class="categories" role="tablist" aria-label="Excuse categories">
+            <div class="category-btn" data-category="general" role="tab" aria-label="General excuses">
+                <span class="icon">✨</span>
+                <span>General</span>
+            </div>
+            <div class="category-btn" data-category="work" role="tab" aria-label="Work excuses">
+                <span class="icon">💼</span>
+                <span>Work</span>
+            </div>
+            <div class="category-btn" data-category="social" role="tab" aria-label="Social event excuses">
+                <span class="icon">👥</span>
+                <span>Social Events</span>
+            </div>
+            <div class="category-btn" data-category="romantic" role="tab" aria-label="Dating excuses">
+                <span class="icon">💖</span>
+                <span>Dating</span>
+            </div>
+            <div class="category-btn" data-category="tardiness" role="tab" aria-label="Tardiness excuses">
+                <span class="icon">⏰</span>
+                <span>Being Late</span>
+            </div>
+            <div class="category-btn" data-category="homework" role="tab" aria-label="Homework excuses">
+                <span class="icon">📚</span>
+                <span>Homework</span>
+            </div>
         </section>
 
+        <!-- Custom Excuse Request Section -->
         <section class="custom-section">
-            <h3><i class="fas fa-edit"></i> Custom Excuse Request</h3>
-            <textarea id="customPrompt" class="custom-prompt" placeholder="Describe your specific situation... (e.g., 'I need an excuse for missing my friend's birthday party because I forgot to buy a gift')"></textarea>
+            <h3>
+                <i class="fas fa-edit"></i>
+                Custom Excuse Request
+            </h3>
+            <textarea 
+                id="customPrompt" 
+                class="custom-prompt" 
+                placeholder="Describe your specific situation... (e.g., 'I need an excuse for missing my friend's birthday party because I forgot to buy a gift')"
+                aria-label="Custom excuse prompt"
+            ></textarea>
 
+            <!-- AI Generation Toggle -->
             <div class="checkbox-group">
-                <input type="checkbox" id="useAI">
+                <input type="checkbox" id="useAI" aria-label="Use AI generation">
                 <label for="useAI">Use AI Generation</label>
             </div>
 
+            <!-- Believability Slider -->
             <div class="believability-group">
                 <div class="believability-label">
                     <div class="believability-label-text">Believability</div>
                     <div class="believability-slider-wrapper">
-                        <input type="range" id="believability" min="0" max="2" step="1" value="0" aria-label="Believability level">
+                        <input 
+                            type="range" 
+                            id="believability" 
+                            min="0" 
+                            max="2" 
+                            step="1" 
+                            value="0" 
+                            aria-label="Believability level"
+                        >
                         <div class="believability-labels">
                             <span>Plausible professional</span>
                             <span>Barely believable</span>
@@ -71,17 +128,25 @@
             </div>
         </section>
 
-        <section id="favoritesSection" class="favorites" style="display: none;">
-            <h3><i class="fas fa-heart" style="color: #ff6b9d;"></i> Your Favorite Excuses</h3>
+        <!-- Favorites Section -->
+        <section id="favoritesSection" class="favorites" style="display: none;" aria-label="Favorite excuses">
+            <h3>
+                <i class="fas fa-heart"></i>
+                Your Favorite Excuses
+            </h3>
             <div id="favoritesList"></div>
         </section>
     </div>
 
+    <!-- Footer -->
     <footer class="footer">
         <p>&copy; 2025 ExcuseAI - Making awkward moments less awkward, one excuse at a time</p>
-        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;"> Remember: Use responsibly and maybe try honesty once in a while! 😉 </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">
+            Remember: Use responsibly and maybe try honesty once in a while! 😉
+        </p>
     </footer>
 
+    <!-- JavaScript -->
     <script src="/static/js/app.js"></script>
 </body>
 </html>
