@@ -11,6 +11,7 @@ from google import genai
 import random
 from flask import Flask, request, jsonify, render_template
 from presets import PRESET_EXCUSES
+API_KEY = "INSERT_KEY_HERE"
 
 # ============================================================================
 # APPLICATION SETUP
@@ -88,7 +89,7 @@ def generate_excuse():
         try:
             # Initialize Gemini AI client
             # TODO: Move API key to environment variable for production
-            client = genai.Client(api_key="INSERT_YOUR_API_KEY")
+            client = genai.Client(api_key=API_KEY)
             
             # Define believability-specific prompt templates
             # Each level produces excuses with different tone and credibility
