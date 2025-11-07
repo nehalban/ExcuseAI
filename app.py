@@ -7,11 +7,12 @@ Author: nehalban
 Repository: https://github.com/nehalban/ExcuseAI
 """
 
+API_KEY = "YOUR_GOOGLE_GEMINI_API_KEY_HERE"  # TODO: Move to environment variable for production
+
 from google import genai
 import random
 from flask import Flask, request, jsonify, render_template
 from presets import PRESET_EXCUSES
-API_KEY = "INSERT_KEY_HERE"
 
 # ============================================================================
 # APPLICATION SETUP
@@ -95,38 +96,40 @@ def generate_excuse():
             # Each level produces excuses with different tone and credibility
             believability_prompts = {
                 0: (
-                    "Write a concise, professional-sounding excuse that is "
-                    "plausible and respectful. Keep it under 30 words. "
-                    "Avoid obvious exaggerations. If a situation is provided, "
-                    "tailor to it; otherwise use the category. "
+                    "Write a professional-sounding excuse that is plausible and respectful in under 30 words. "
+                    "Avoid obvious exaggerations."
                     "Tone: professional, empathetic, accountable. "
                     "Output only the excuse."
                 ),
                 1: (
-                    "Write a short excuse that is bold and slightly unbelievable "
-                    "but delivered with confidence. Keep it under 30 words. "
-                    "Add a playful twist without going full comedy. "
+                    "Write a short excuse that is bold and only somewhat believable, but delivered with confidence. Keep it under 30 words. Add a playful twist without going full comedy. "
                     "Tone: audacious, witty, borderline plausible. "
                     "Output only the excuse."
                 ),
-                2: (
-                    "Write a short, funny excuse that embraces comedic chaos. "
-                    "Keep it under 25 words. Feel free to be absurd and witty. "
-                    "Tone: playful, irreverent, clearly comedic. "
-                    "Output only the excuse."
-                )
+                2: '''Write a short, hillarious excuse that embraces comedic chaos.
+                    Not meant to get you out of trouble, just   roll on the floor laughing. Be creative! Keep it under 25 words.
+                    Tone: playful, irreverent, absurd, clearly comedic
+                    Output only the excuse.'''
+            }
+            situation_for_category = {
+                "general": "",
+                "work": "Situation: being late for work or not meeting a work deadline",
+                "social": "Situation: missing a social event or gathering",
+                "romantic": "Situation: late for a romantic date or missing it",
+                "tardiness": "Situation: too tired to move",
+                "homework": "Situation: didn't complete homework/assignment"
             }
 
             # Build prompt context from user input
             base_context = (
                 f"Situation: '{custom_prompt_text}'" if custom_prompt_text 
-                else f"Category: '{category}'"
+                else situation_for_category.get(category, "")
             )
             
             # Get appropriate system directive based on believability level
             system_directive = believability_prompts.get(
                 believability, 
-                believability_prompts[0]
+                believability_prompts[2]  # Default to comedic chaos
             )
             
             # Combine directive and context for final prompt
